@@ -4,20 +4,34 @@ import torch
 from PIL import Image, ImageDraw
 from transformers import AutoProcessor, AutoModelForZeroShotObjectDetection
 
+import os
+import sys
+
 model_id = "IDEA-Research/grounding-dino-tiny"
 # device = "cuda"
 device = "cpu"
 
-processor = AutoProcessor.from_pretrained(model_id)
-model = AutoModelForZeroShotObjectDetection.from_pretrained(model_id).to(device)
-
 # image_url = "http://images.cocodataset.org/val2017/000000039769.jpg"
 # image = Image.open(requests.get(image_url, stream=True).raw)
-img_url = "jesstest.png"
+files = sorted(os.listdir(path = "weapon-tests"))
+for index, file in enumerate(files):
+    print(f"{index}: {file}")
+
+selection = int(input("Select the file number: "))
+
+# sys.exit(0)
+
+img_url = "weapon-tests/" + files[selection]
 image = Image.open(img_url).convert("RGB")
 
 # Check for cats and remote controls
-text = "person. yoga mat. gun. tree. ball."
+# text = "gun. person. face."
+text = input("enter objects to detect, seperated by periods: ")
+labels = [value.strip() for value in text.split(".")]
+
+# cue up the monster
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForZeroShotObjectDetection.from_pretrained(model_id).to(device)
 
 inputs = processor(images=image, text=text, return_tensors="pt").to(device)
 with torch.no_grad():
@@ -45,10 +59,9 @@ image_width, image_height = image.size
 draw = ImageDraw.Draw(image)
 
 label_object = {
-    "person" : "red",
-    "yoga mat" : "purple",
-    "tree" : "green",
-    "ball" : "blue",
+    "person" : "blue",
+    "gun" : "red",
+    "face" : "green",
 }
 
 # Superimpose each tensor as a rectangle on the image
