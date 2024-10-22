@@ -17,17 +17,17 @@ files = sorted(os.listdir(path = "weapon-tests"))
 for index, file in enumerate(files):
     print(f"{index}: {file}")
 
+# user selection of file from directory
 selection = int(input("Select the file number: "))
-
-# sys.exit(0)
-
 img_url = "weapon-tests/" + files[selection]
-image = Image.open(img_url).convert("RGB")
+
+# user input of objects to detect
+text = input("Enter objects to detect, separated by periods: ")
+labels = [value.strip() for value in text.split(".")]
 
 # Check for cats and remote controls
 # text = "gun. person. face."
-text = input("enter objects to detect, seperated by periods: ")
-labels = [value.strip() for value in text.split(".")]
+image = Image.open(img_url).convert("RGB")
 
 # cue up the monster
 processor = AutoProcessor.from_pretrained(model_id)
